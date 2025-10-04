@@ -9,11 +9,11 @@ const nsInput = document.getElementById('namespace');
 const badgeImg = document.getElementById('badgeImg');
 
 // default namespace & key (change to your repo / site slug)
-let namespace = nsInput.value.trim() || 'your-unique-namespace';
+let namespace = nsInput.value.trim() || 'vikrantpkamble-github';
 let key = 'visitors'; // you can change this to page slug
 
 nsInput.addEventListener('change', () => {
-  namespace = nsInput.value.trim() || 'your-unique-namespace';
+  namespace = nsInput.value.trim() || 'vikrantpkamble-github';
   refreshCount();
 });
 
