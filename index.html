@@ -1,35 +1,37 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Visit Counter</title>
+  <title>vikrantpkamble.github.io — Visit Counter</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="card">
-    <h1>My Site Visitors</h1>
-    <div class="counter">
-      <div class="count" id="count">Loading...</div>
-      <div class="label">Total Visits</div>
+  <main class="card">
+    <h1>vikrantpkamble.github.io</h1>
+    <p class="subtitle">Simple Visit Counter (CountAPI)</p>
+
+    <section class="stats">
+      <div class="stat">
+        <div class="big" id="count">Loading…</div>
+        <div class="label">Total visits</div>
+      </div>
+
+      <div class="stat">
+        <div class="big small" id="last-visit">—</div>
+        <div class="label">Your last visit (this browser)</div>
+      </div>
+    </section>
+
+    <div class="controls">
+      <button id="manualBtn" type="button">Record Visit (test)</button>
+      <div class="badge">
+        <img id="badgeImg" alt="visits badge" />
+      </div>
     </div>
 
-    <div class="info">
-      <div>Last visit: <span id="last-visit">—</span></div>
-      <div>Unique id: <input id="namespace" value="your-unique-namespace" /></div>
-      <small>Change namespace to isolate counters per site/page.</small>
-    </div>
-
-    <button id="visitBtn">Record Visit</button>
-
-    <div class="badge">
-      <img id="badgeImg" alt="visitor badge" />
-    </div>
-
-    <footer>
-      <small>Built with CountAPI · Deploy on GitHub Pages</small>
-    </footer>
-  </div>
+    <p class="foot">Powered by <a href="https://countapi.xyz" target="_blank" rel="noopener">CountAPI</a> · Deploy on GitHub Pages</p>
+  </main>
 
   <script src="script.js"></script>
 </body>
