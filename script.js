@@ -1,77 +1,59 @@
-// Simple visit counter using CountAPI (https://countapi.xyz)
-// This increments and reads a counter stored under namespace:key
-// You can change namespace/key to anything unique for your site.
+// Visit Counter for vikrantpkamble.github.io
+// Using CountAPI (https://countapi.xyz)
 
-const countEl = document.getElementById('count');
-const lastEl = document.getElementById('last-visit');
-const btn = document.getElementById('visitBtn');
-const nsInput = document.getElementById('namespace');
-const badgeImg = document.getElementById('badgeImg');
+const namespace = "vikrantpkamble-github";   // unique ID for your site
+const key = "site-visits";                   // counter name
 
-// default namespace & key (change to your repo / site slug)
-let namespace = nsInput.value.trim() || 'vikrantpkamble-github';
-let key = 'visitors'; // you can change this to page slug
+const countEl = document.getElementById("count");
+const lastEl = document.getElementById("last-visit");
 
-nsInput.addEventListener('change', () => {
-  namespace = nsInput.value.trim() || 'vikrantpkamble-github';
-  refreshCount();
-});
-
-// Build CountAPI endpoints
 function endpoint(op) {
-  // using countapi.xyz; op: 'hit' or 'get' or 'create?value=0'
-  return `https://api.countapi.xyz/${op}/${encodeURIComponent(namespace)}/${encodeURIComponent(key)}`;
+  return `https://api.countapi.xyz/${op}/${namespace}/${key}`;
 }
 
-// Update UI from the returned data object
+// Update UI with count and last visit info
 function updateUI(data) {
   if (!data) return;
-  countEl.innerText = data.value ?? '—';
-  // store and show a last-visit timestamp (client-side)
+  countEl.innerText = data.value ?? "—";
+
   const last = localStorage.getItem(`lastvisit_${namespace}_${key}`);
-  lastEl.innerText = last ? new Date(parseInt(last,10)).toLocaleString() : 'This is your first visit from this browser';
-  // badge (image) - optional: CountAPI provides image endpoint too
-  badgeImg.src = `https://api.countapi.xyz/hit/${encodeURIComponent(namespace)}/${encodeURIComponent(key)}/?user=${encodeURIComponent(navigator.userAgent)}`;
-  badgeImg.alt = `visits: ${data.value}`;
+  lastEl.innerText = last
+    ? new Date(parseInt(last, 10)).toLocaleString()
+    : "This is your first visit from this browser";
 }
 
-// Fetch the current count (does not increment)
+// Fetch counter, create if missing
 async function refreshCount() {
-  countEl.innerText = 'Loading...';
   try {
-    const res = await fetch(endpoint('get'));
+    const res = await fetch(endpoint("get"));
     if (res.ok) {
-      const json = await res.json();
-      updateUI(json);
+      updateUI(await res.json());
     } else {
-      // if not exist, create it
-      await fetch(endpoint('create?value=0'));
+      // create new counter starting at 0
+      await fetch(`https://api.countapi.xyz/create?namespace=${namespace}&key=${key}&value=0`);
       refreshCount();
     }
   } catch (e) {
-    console.error(e);
-    countEl.innerText = 'Error';
+    console.warn("Visit counter error:", e);
+    countEl.innerText = "⚠ Error loading count";
   }
 }
 
-// Record a visit (increments)
+// Record a visit (increment)
 async function recordVisit() {
-  btn.disabled = true;
-  btn.innerText = 'Recording...';
   try {
-    const res = await fetch(endpoint('hit'));
-    const json = await res.json();
-    // save a timestamp locally
-    localStorage.setItem(`lastvisit_${namespace}_${key}`, Date.now().toString());
-    updateUI(json);
+    const res = await fetch(endpoint("hit"));
+    if (res.ok) {
+      const json = await res.json();
+      localStorage.setItem(`lastvisit_${namespace}_${key}`, Date.now().toString());
+      updateUI(json);
+    }
   } catch (e) {
-    console.error(e);
-    alert('Could not record visit. Check network.');
-  } finally {
-    btn.disabled = false;
-    btn.innerText = 'Record Visit';
+    console.warn("Could not record visit:", e);
   }
 }
 
-btn.addEventListener('click', recordVisit);
-refreshCount();
+// On load → record visit and update count
+document.addEventListener("DOMContentLoaded", async () => {
+  await recordVisit();
+});
